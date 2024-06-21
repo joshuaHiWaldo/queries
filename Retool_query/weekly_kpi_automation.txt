@@ -1,0 +1,27 @@
+- This portion CTE is for generating weeks based on 
+- start_date & end_date provided in retool using the date filter
+
+WITH weeks AS (
+WITH RECURSIVE week_dates AS (
+    SELECT
+        DATEADD('DAY', 0 - DAYOFWEEK(TO_DATE(SUBSTRING({{date1.value}}, 1, 10), 'YYYY-MM-DD')), TO_DATE(SUBSTRING({{date1.value}}, 1, 10), 'YYYY-MM-DD')) AS week_start_date, -- Adjust to start on Sunday
+        DATEADD('DAY', 6 - DAYOFWEEK(TO_DATE(SUBSTRING({{date1.value}}, 1, 10), 'YYYY-MM-DD')), TO_DATE(SUBSTRING({{date1.value}}, 1, 10), 'YYYY-MM-DD')) AS week_end_date -- End date of the week
+    UNION ALL
+    SELECT
+        DATEADD('WEEK', 1, week_start_date),
+        DATEADD('WEEK', 1, week_end_date)
+    FROM
+        week_dates
+    WHERE
+        week_end_date < TO_DATE(SUBSTRING({{date2.value}}, 1, 10), 'YYYY-MM-DD') -- Adjust end date for Sunday
+        AND DATEADD('WEEK', 1, week_end_date) <= TO_DATE(SUBSTRING({{date2.value}}, 1, 10), 'YYYY-MM-DD') -- Check if the next week's end date is not beyond the specified end date
+)
+SELECT
+    week_start_date,
+    week_end_date
+FROM
+    week_dates
+ORDER BY
+    week_start_date
+),
+ 

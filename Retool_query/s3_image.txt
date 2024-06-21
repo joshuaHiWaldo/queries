@@ -1,0 +1,9 @@
+To read image from retool:
+
+To get all images:
+- list all files in a bucket 
+-- include bucket name & prefix results of path (customers/prescriptions)
+
+To view images link in retool:
+- read a file from s3
+-- include bucket name & s3 file key (table1.selectedRow.Key) 
